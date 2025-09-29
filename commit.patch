@@ -1,0 +1,97 @@
+From d6d8d8858b3112cd1529b86f689b9340b6054ff4 Mon Sep 17 00:00:00 2001
+From: Nelio Alves <acenelio@gmail.com>
+Date: Fri, 30 Sep 2022 11:54:11 -0300
+Subject: [PATCH] H2 database, test profile, JPA
+
+---
+ pom.xml                                          | 16 +++++++++++++---
+ .../com/educandoweb/course/entities/User.java    | 10 ++++++++++
+ src/main/resources/application-test.properties   |  9 +++++++++
+ src/main/resources/application.properties        |  2 ++
+ 4 files changed, 34 insertions(+), 3 deletions(-)
+ create mode 100644 src/main/resources/application-test.properties
+
+diff --git a/pom.xml b/pom.xml
+index 6f3a8e8..c432c24 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,12 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 	<modelVersion>4.0.0</modelVersion>
+ 	<parent>
+ 		<groupId>org.springframework.boot</groupId>
+ 		<artifactId>spring-boot-starter-parent</artifactId>
+ 		<version>3.0.0-M5</version>
+-		<relativePath/> <!-- lookup parent from repository -->
++		<relativePath /> <!-- lookup parent from repository -->
+ 	</parent>
+ 	<groupId>com.educandoweb</groupId>
+ 	<artifactId>course</artifactId>
+@@ -27,6 +26,17 @@
+ 			<artifactId>spring-boot-starter-test</artifactId>
+ 			<scope>test</scope>
+ 		</dependency>
++
++		<dependency>
++			<groupId>org.springframework.boot</groupId>
++			<artifactId>spring-boot-starter-data-jpa</artifactId>
++		</dependency>
++
++		<dependency>
++			<groupId>com.h2database</groupId>
++			<artifactId>h2</artifactId>
++			<scope>runtime</scope>
++		</dependency>
+ 	</dependencies>
+ 
+ 	<build>
+diff --git a/src/main/java/com/educandoweb/course/entities/User.java b/src/main/java/com/educandoweb/course/entities/User.java
+index a99c567..5fdf666 100644
+--- a/src/main/java/com/educandoweb/course/entities/User.java
++++ b/src/main/java/com/educandoweb/course/entities/User.java
+@@ -2,9 +2,19 @@
+ 
+ import java.io.Serializable;
+ 
++import jakarta.persistence.Entity;
++import jakarta.persistence.GeneratedValue;
++import jakarta.persistence.GenerationType;
++import jakarta.persistence.Id;
++import jakarta.persistence.Table;
++
++@Entity
++@Table(name = "tb_user")
+ public class User implements Serializable {
+ 	private static final long serialVersionUID = 1L;
+ 
++	@Id
++	@GeneratedValue(strategy = GenerationType.IDENTITY)
+ 	private Long id;
+ 	private String name;
+ 	private String email;
+diff --git a/src/main/resources/application-test.properties b/src/main/resources/application-test.properties
+new file mode 100644
+index 0000000..1ffa941
+--- /dev/null
++++ b/src/main/resources/application-test.properties
+@@ -0,0 +1,9 @@
++spring.datasource.url=jdbc:h2:mem:testdb
++spring.datasource.username=sa
++spring.datasource.password=
++
++spring.h2.console.enabled=true
++spring.h2.console.path=/h2-console
++
++spring.jpa.show-sql=true
++spring.jpa.properties.hibernate.format_sql=true
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+index 8b13789..b3d3bae 100644
+--- a/src/main/resources/application.properties
++++ b/src/main/resources/application.properties
+@@ -1 +1,3 @@
++spring.profiles.active=test
+ 
++spring.jpa.open-in-view=true
